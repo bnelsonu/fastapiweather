@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, declarative_base
-from datetime import datetime
+from datetime import datetime, timezone
 
 Base = declarative_base()
 
@@ -28,7 +28,9 @@ class WeatherRecord(Base):
     temperature = Column(Float)  # Temperature in °C
     humidity = Column(Float)  # Relative humidity (%)
     description = Column(String)  # Weather description, e.g. "Clear"
-    timestamp = Column(DateTime, default=datetime.utcnow)  # UTC time of the record
+    timestamp = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )  # Timezone-aware UTC timestamp
 
     # Reference back to the parent City object
     city = relationship("City", back_populates="weather_records")
